@@ -20,18 +20,6 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
     lateinit var adapter: ToDoItemAdapter
     private var listViewItems: ListView? = null
 
-    override fun modifyItemState(itemObjectId: String, isDone: Boolean) {
-        val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
-        itemReference.child("done").setValue(isDone);
-    }
-    //delete an item
-    override fun onItemDelete(itemObjectId: String) {
-        //get child reference in database via the ObjectID
-        val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
-        //deletion can be done via removeValue() method
-        itemReference.removeValue()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,7 +37,20 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
         toDoItemList = mutableListOf<ToDoItem>()
         adapter = ToDoItemAdapter(this, toDoItemList!!)
         listViewItems!!.setAdapter(adapter)
-        mDatabase.orderByKey().addListenerForSingleValueEvent(itemListener)
+        //mDatabase.orderByKey().addListenerForSingleValueEvent(itemListener)
+        mDatabase.orderByKey().addValueEventListener(itemListener)
+    }
+
+    override fun modifyItemState(itemObjectId: String, isDone: Boolean) {
+        val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
+        itemReference.child("done").setValue(isDone);
+    }
+    //delete an item
+    override fun onItemDelete(itemObjectId: String) {
+        //get child reference in database via the ObjectID
+        val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
+        //deletion can be done via removeValue() method
+        itemReference.removeValue()
     }
 
     private fun addNewItemDialog() {
@@ -84,7 +85,9 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
             Log.w("MainActivity", "loadItem:onCancelled", databaseError.toException())
         }
     }
+
     private fun addDataToList(dataSnapshot: DataSnapshot) {
+        toDoItemList!!.clear()
         val items = dataSnapshot.children.iterator()
         //Check if current database contains any collection
         if (items.hasNext()) {
@@ -102,7 +105,7 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
                 todoItem.objectId = currentItem.key
                 todoItem.done = map.get("done") as Boolean?
                 todoItem.itemText = map.get("itemText") as String?
-                toDoItemList!!.add(todoItem);
+                toDoItemList!!.add(todoItem)
             }
         }
         //alert adapter that has changed
