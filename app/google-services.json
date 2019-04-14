@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "20405450678",
+    "firebase_url": "https://toodoo-db835.firebaseio.com",
+    "project_id": "toodoo-db835",
+    "storage_bucket": "toodoo-db835.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20405450678:android:a34dd20809ee7fa3",
+        "android_client_info": {
+          "package_name": "com.example.toodoo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20405450678-6qo5n10t2pgjp61p3jeg4fd0oerrksbk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.toodoo",
+            "certificate_hash": "4a59e96a96ad2c1dfc49a67405f42faa4e0771c8"
+          }
+        },
+        {
+          "client_id": "20405450678-ur41dcu9op5o44dtqul1oedpqg8r1h9u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9lIfxIg7biGvk_4OWII8AxBtUM78MWp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20405450678-ur41dcu9op5o44dtqul1oedpqg8r1h9u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
