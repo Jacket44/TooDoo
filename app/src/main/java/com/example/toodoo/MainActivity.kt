@@ -1,3 +1,4 @@
+// Mateusz Trzeciak, 2019
 package com.example.toodoo
 
 import android.app.AlertDialog
