@@ -10,15 +10,17 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.firebase.database.*
 
 class MainActivity : AppCompatActivity(), ItemRowListener {
 
-    //Get Access to Firebase database, no need of any URL, Firebase
-    //identifies the connection via the package name of the app
-    lateinit var mDatabase: DatabaseReference
-    var toDoItemList: MutableList<ToDoItem>? = null
-    lateinit var adapter: ToDoItemAdapter
+
+    private lateinit var mDatabase: DatabaseReference
+    private var toDoItemList: MutableList<ToDoItem>? = null
+    private lateinit var adapter: ToDoItemAdapter
     private var listViewItems: ListView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,29 +30,29 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
         //reference for FAB
         val fab = findViewById<View>(R.id.fab) as FloatingActionButton
         listViewItems = findViewById<View>(R.id.items_list) as ListView
-        //Adding click listener for FAB
-        fab.setOnClickListener { view ->
-            //Show Dialog here to add new Item
+        fab.setOnClickListener {
             addNewItemDialog()
         }
 
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "todo-list.db"
+        ).build()
+
         mDatabase = FirebaseDatabase.getInstance().reference
-        toDoItemList = mutableListOf<ToDoItem>()
+        toDoItemList = mutableListOf()
         adapter = ToDoItemAdapter(this, toDoItemList!!)
-        listViewItems!!.setAdapter(adapter)
-        //mDatabase.orderByKey().addListenerForSingleValueEvent(itemListener)
+        listViewItems!!.adapter = adapter
         mDatabase.orderByKey().addValueEventListener(itemListener)
     }
 
     override fun modifyItemState(itemObjectId: String, isDone: Boolean) {
         val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
-        itemReference.child("done").setValue(isDone);
+        itemReference.child("done").setValue(isDone)
     }
-    //delete an item
+
     override fun onItemDelete(itemObjectId: String) {
-        //get child reference in database via the ObjectID
         val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
-        //deletion can be done via removeValue() method
         itemReference.removeValue()
     }
 
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
         alert.setMessage("Add New Item")
         alert.setTitle("Enter To Do Item Text")
         alert.setView(itemEditText)
-        alert.setPositiveButton("Submit") { dialog, positiveButton ->
+        alert.setPositiveButton("Submit") { dialog, _ ->
             val todoItem = ToDoItem.create()
             todoItem.itemText = itemEditText.text.toString()
             todoItem.done = false
@@ -76,7 +78,7 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
 
     }
 
-    var itemListener: ValueEventListener = object : ValueEventListener {
+    private var itemListener: ValueEventListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             // Get Post object and use the values to update the UI
             addDataToList(dataSnapshot)
@@ -101,11 +103,11 @@ class MainActivity : AppCompatActivity(), ItemRowListener {
                 val currentItem = itemsIterator.next()
                 val todoItem = ToDoItem.create()
                 //get current data in a map
-                val map = currentItem.getValue() as HashMap<String, Any>
+                val map = currentItem.value as HashMap<*, *>
                 //key will return Firebase ID
                 todoItem.objectId = currentItem.key
-                todoItem.done = map.get("done") as Boolean?
-                todoItem.itemText = map.get("itemText") as String?
+                todoItem.done = map["done"] as Boolean?
+                todoItem.itemText = map["itemText"] as String?
                 toDoItemList!!.add(todoItem)
             }
         }

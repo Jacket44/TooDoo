@@ -1,7 +1,6 @@
 package com.example.toodoo
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +18,9 @@ class ToDoItemAdapter(context: Context, toDoItemList: MutableList<ToDoItem>) : B
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
 
-        val objectId: String = itemList.get(position).objectId as String
-        val itemText: String = itemList.get(position).itemText as String
-        val done: Boolean = itemList.get(position).done as Boolean
+        val objectId: String = itemList[position].objectId as String
+        val itemText: String = itemList[position].itemText as String
+        val done: Boolean = itemList[position].done as Boolean
         val view: View
         val vh: ListRowHolder
 
@@ -44,7 +43,7 @@ class ToDoItemAdapter(context: Context, toDoItemList: MutableList<ToDoItem>) : B
         return view
     }
     override fun getItem(index: Int): Any {
-        return itemList.get(index)
+        return itemList[index]
     }
     override fun getItemId(index: Int): Long {
         return index.toLong()
@@ -53,8 +52,8 @@ class ToDoItemAdapter(context: Context, toDoItemList: MutableList<ToDoItem>) : B
         return itemList.size
     }
     private class ListRowHolder(row: View?) {
-        val label: TextView = row!!.findViewById<TextView>(R.id.tv_item_text) as TextView
-        val isDone: CheckBox = row!!.findViewById<CheckBox>(R.id.cb_item_is_done) as CheckBox
-        val ibDeleteObject: ImageButton = row!!.findViewById<ImageButton>(R.id.iv_cross) as ImageButton
+        val label: TextView = row!!.findViewById(R.id.tv_item_text) as TextView
+        val isDone: CheckBox = row!!.findViewById(R.id.cb_item_is_done) as CheckBox
+        val ibDeleteObject: ImageButton = row!!.findViewById(R.id.iv_cross) as ImageButton
     }
 }
